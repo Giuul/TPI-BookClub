@@ -14,7 +14,7 @@ namespace Domain.Entities
         public string Password { get; set; } = string.Empty;
 
         // Relaciones
-        public ICollection<ReadingList> ListasCreadas { get; set; } = new List<ReadingList>();
-        public ICollection<Vote> Votos { get; set; } = new List<Vote>();
+        public List<ReadingList> ListasCreadas { get; set; } = new List<ReadingList>();
+        public List<Vote> Votos { get; set; } = new List<Vote>();
     }
 }
