@@ -18,6 +18,6 @@ namespace Domain.Entities
         public int ListId { get; set; }
         public ReadingList ListaLectura { get; set; } = null!;
 
-        public ICollection<Vote> Votos { get; set; } = new List<Vote>();
+        public List<Vote> Votos { get; set; } = new List<Vote>();
     }
 }
