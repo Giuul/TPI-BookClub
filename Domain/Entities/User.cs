@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Domain.Entities
+{
+    public class User
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+
+        // Relaciones
+        public ICollection<ReadingList> ListasCreadas { get; set; } = new List<ReadingList>();
+        public ICollection<Vote> Votos { get; set; } = new List<Vote>();
+    }
+}
