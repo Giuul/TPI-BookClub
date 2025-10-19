@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entities
+namespace Domain.Interfaces
 {
-    public class Admin : User
+    public interface IRepositoryBase<T> where T : class
     {
-        public bool SuperAdmin { get; set; } = false;
     }
 }

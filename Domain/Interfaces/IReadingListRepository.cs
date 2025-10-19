@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infraestructure.Data
+namespace Domain.Interfaces
 {
-    public class BookClubContext 
+    public interface IReadingListRepository : IRepositoryBase<ReadingList>
     {
     }
 }
