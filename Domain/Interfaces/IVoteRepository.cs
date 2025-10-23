@@ -1,13 +1,13 @@
 ﻿using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface IVoteRepository : IRepositoryBase <Vote>
+    public interface IVoteRepository
     {
+        Task<IEnumerable<Vote>> GetAllAsync();
+        Task<Vote?> GetByIdAsync(int id);
+        Task AddAsync(Vote vote);
+        void Delete(Vote vote);
+        Task SaveChangesAsync();
     }
 }
