@@ -1,13 +1,14 @@
 ﻿using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface IReadingListRepository : IRepositoryBase<ReadingList>
+    public interface IReadingListRepository
     {
+        Task<IEnumerable<ReadingList>> GetAllAsync();
+        Task<ReadingList?> GetByIdAsync(int id);
+        Task AddAsync(ReadingList list);
+        void Update(ReadingList list);
+        void Delete(ReadingList list);
+        Task SaveChangesAsync();
     }
 }

@@ -1,0 +1,13 @@
+﻿using Application.DTOs;
+
+namespace Application.Interfaces
+{
+    public interface IUserService
+    {
+        Task<IEnumerable<UserDTO>> GetAllAsync();
+        Task<UserDTO?> GetByIdAsync(int id);
+        Task<UserDTO> RegisterAsync(UserDTO dto);
+        Task<UserDTO> UpdateAsync(int id, UserDTO dto);
+        Task<bool> DeleteAsync(int id);
+    }
+}
