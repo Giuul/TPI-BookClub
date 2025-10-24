@@ -5,44 +5,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Repositories
 {
-    public class BookRepository : IBookRepository
+    public class BookRepository : RepositoryBase<Book>, IBookRepository
     {
-        private readonly ApplicationDbContext _context;
+        public BookRepository(ApplicationDbContext context) : base(context) { }
 
-        public BookRepository(ApplicationDbContext context)
+        public async Task<IEnumerable<Book>> GetByGeneroAsync(string genero)
         {
-            _context = context;
+            return await _context.Books
+                .Where(b => b.Genero.ToLower() == genero.ToLower())
+                .ToListAsync();
         }
 
-        public async Task<IEnumerable<Book>> GetAllAsync()
+        public async Task<IEnumerable<Vote>> GetVotesByBookIdAsync(int bookId)
         {
-            return await _context.Books.Include(b => b.ListaLectura).ToListAsync();
-        }
-
-        public async Task<Book?> GetByIdAsync(int id)
-        {
-            return await _context.Books.Include(b => b.ListaLectura)
-                                       .FirstOrDefaultAsync(b => b.Id == id);
-        }
-
-        public async Task AddAsync(Book book)
-        {
-            await _context.Books.AddAsync(book);
-        }
-
-        public void Update(Book book)
-        {
-            _context.Books.Update(book);
-        }
-
-        public void Delete(Book book)
-        {
-            _context.Books.Remove(book);
-        }
-
-        public async Task SaveChangesAsync()
-        {
-            await _context.SaveChangesAsync();
+            return await _context.Votes
+                .Where(v => v.LibroId == bookId)
+                .Include(v => v.Usuario)
+                .ToListAsync();
         }
     }
 }
