@@ -2,14 +2,10 @@
 
 namespace Domain.Interfaces
 {
-    public interface IBookRepository
+    public interface IBookRepository : IRepositoryBase<Book>
     {
-        Task<IEnumerable<Book>> GetAllAsync();
-        Task<Book?> GetByIdAsync(int id);
-        Task AddAsync(Book book);
-        void Update(Book book);
-        void Delete(Book book);
-        Task SaveChangesAsync();
+        Task<IEnumerable<Book>> GetByGeneroAsync(string genero);
+        Task<IEnumerable<Vote>> GetVotesByBookIdAsync(int bookId);
     }
 }
 

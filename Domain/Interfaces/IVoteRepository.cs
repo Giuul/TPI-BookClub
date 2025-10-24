@@ -2,12 +2,10 @@
 
 namespace Domain.Interfaces
 {
-    public interface IVoteRepository
+    public interface IVoteRepository : IRepositoryBase<Vote>
     {
-        Task<IEnumerable<Vote>> GetAllAsync();
-        Task<Vote?> GetByIdAsync(int id);
-        Task AddAsync(Vote vote);
-        void Delete(Vote vote);
-        Task SaveChangesAsync();
+        Task<IEnumerable<Vote>> GetByLibroIdAsync(int libroId);
+        Task<IEnumerable<Vote>> GetByUsuarioIdAsync(int usuarioId);
     }
 }
+

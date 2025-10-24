@@ -2,13 +2,10 @@
 
 namespace Domain.Interfaces
 {
-    public interface IReadingListRepository
+    public interface IReadingListRepository : IRepositoryBase<ReadingList>
     {
-        Task<IEnumerable<ReadingList>> GetAllAsync();
-        Task<ReadingList?> GetByIdAsync(int id);
-        Task AddAsync(ReadingList list);
-        void Update(ReadingList list);
-        void Delete(ReadingList list);
-        Task SaveChangesAsync();
+        Task<IEnumerable<ReadingList>> GetByCreadorIdAsync(int creadorId);
+        Task<IEnumerable<Book>> GetBooksByListIdAsync(int listId);
     }
 }
+
