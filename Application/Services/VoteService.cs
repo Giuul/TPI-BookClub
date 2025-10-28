@@ -1,5 +1,5 @@
-﻿using Application.Models;
-using Application.Interfaces;
+﻿using Application.Interfaces;
+using Application.Models;
 using Domain.Entities;
 using Domain.Interfaces;
 
@@ -7,37 +7,17 @@ namespace Application.Services
 {
     public class VoteService : IVoteService
     {
-        private readonly IVoteRepository _voteRepository;
+        private readonly IVoteRepository _repo;
 
-        public VoteService(IVoteRepository voteRepository)
-        {
-            _voteRepository = voteRepository;
-        }
+        public VoteService(IVoteRepository repo) => _repo = repo;
 
-        public async Task<IEnumerable<VoteDTO>> GetAllAsync()
-        {
-            var votes = await _voteRepository.GetAllAsync();
-            return votes.Select(v => new VoteDTO        
-            {
-                Id = v.Id,
-                Valor = v.Valor,
-                UsuarioId = v.UsuarioId,
-                LibroId = v.LibroId
-            });
-        }
+        public async Task<ICollection<VoteDTO>> GetAllAsync()
+            => VoteDTO.CreateList(await _repo.GetAllAsync());
 
         public async Task<VoteDTO?> GetByIdAsync(int id)
         {
-            var vote = await _voteRepository.GetByIdAsync(id);
-            if (vote == null) return null;
-
-            return new VoteDTO
-            {
-                Id = vote.Id,
-                Valor = vote.Valor,
-                UsuarioId = vote.UsuarioId,
-                LibroId = vote.LibroId
-            };
+            var vote = await _repo.GetByIdAsync(id);
+            return vote == null ? null : VoteDTO.FromEntity(vote);
         }
 
         public async Task<VoteDTO> CreateAsync(VoteDTO dto)
@@ -49,22 +29,19 @@ namespace Application.Services
                 LibroId = dto.LibroId
             };
 
-            await _voteRepository.AddAsync(vote);
-            await _voteRepository.SaveChangesAsync();
-
-            dto.Id = vote.Id;
-            return dto;
+            await _repo.AddAsync(vote);
+            await _repo.SaveChangesAsync();
+            return VoteDTO.FromEntity(vote);
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var vote = await _voteRepository.GetByIdAsync(id);
+            var vote = await _repo.GetByIdAsync(id);
             if (vote == null) return false;
 
-            _voteRepository.Delete(vote);
-            await _voteRepository.SaveChangesAsync();
+            _repo.Delete(vote);
+            await _repo.SaveChangesAsync();
             return true;
         }
     }
 }
-

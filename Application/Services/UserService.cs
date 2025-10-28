@@ -1,5 +1,5 @@
-﻿using Application.Models;
-using Application.Interfaces;
+﻿using Application.Interfaces;
+using Application.Models;
 using Domain.Entities;
 using Domain.Interfaces;
 
@@ -7,39 +7,17 @@ namespace Application.Services
 {
     public class UserService : IUserService
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUserRepository _repo;
 
-        public UserService(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
+        public UserService(IUserRepository repo) => _repo = repo;
 
-        public async Task<IEnumerable<UserDTO>> GetAllAsync()
-        {
-            var users = await _userRepository.GetAllAsync();
-            return users.Select(u => new UserDTO
-            {
-                Id = u.Id,
-                Nombre = u.Nombre,
-                Email = u.Email,
-                Password = u.Password,
-                Rol = u.Rol.ToString()
-            });
-        }
+        public async Task<ICollection<UserDTO>> GetAllAsync()
+            => UserDTO.CreateList(await _repo.GetAllAsync());
 
         public async Task<UserDTO?> GetByIdAsync(int id)
         {
-            var user = await _userRepository.GetByIdAsync(id);
-            if (user == null) return null;
-
-            return new UserDTO
-            {
-                Id = user.Id,
-                Nombre = user.Nombre,
-                Email = user.Email,
-                Password = user.Password,
-                Rol = user.Rol.ToString()
-            };
+            var user = await _repo.GetByIdAsync(id);
+            return user == null ? null : UserDTO.FromEntity(user);
         }
 
         public async Task<UserDTO> RegisterAsync(UserDTO dto)
@@ -48,39 +26,37 @@ namespace Application.Services
             {
                 Nombre = dto.Nombre,
                 Email = dto.Email,
-                Password = dto.Password,
+                Password = dto.Password ?? string.Empty,
                 Rol = Enum.TryParse<Rol>(dto.Rol, out var rol) ? rol : Rol.usuario
             };
 
-            await _userRepository.AddAsync(user);
-            await _userRepository.SaveChangesAsync();
-
-            dto.Id = user.Id;
-            return dto;
+            await _repo.AddAsync(user);
+            await _repo.SaveChangesAsync();
+            return UserDTO.FromEntity(user);
         }
 
         public async Task<UserDTO> UpdateAsync(int id, UserDTO dto)
         {
-            var user = await _userRepository.GetByIdAsync(id);
-            if (user == null) throw new Exception("Usuario no encontrado");
+            var user = await _repo.GetByIdAsync(id) ?? throw new Exception("Usuario no encontrado.");
 
             user.Nombre = dto.Nombre;
             user.Email = dto.Email;
-            user.Password = dto.Password;
+            if (!string.IsNullOrEmpty(dto.Password))
+                user.Password = dto.Password;
             user.Rol = Enum.TryParse<Rol>(dto.Rol, out var rol) ? rol : Rol.usuario;
 
-            _userRepository.Update(user);
-            await _userRepository.SaveChangesAsync();
-            return dto;
+            _repo.Update(user);
+            await _repo.SaveChangesAsync();
+            return UserDTO.FromEntity(user);
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var user = await _userRepository.GetByIdAsync(id);
+            var user = await _repo.GetByIdAsync(id);
             if (user == null) return false;
 
-            _userRepository.Delete(user);
-            await _userRepository.SaveChangesAsync();
+            _repo.Delete(user);
+            await _repo.SaveChangesAsync();
             return true;
         }
     }

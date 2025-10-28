@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain.Entities;
 
 namespace Application.Models
 {
@@ -14,6 +10,19 @@ namespace Application.Models
         public string Genero { get; set; } = string.Empty;
         public string? Resenia { get; set; }
         public int ListId { get; set; }
+
+        public static BookDTO FromEntity(Book book)
+            => new BookDTO
+            {
+                Id = book.Id,
+                Titulo = book.Titulo,
+                Autor = book.Autor,
+                Genero = book.Genero,
+                Resenia = book.Resenia,
+                ListId = book.ListId
+            };
+
+        public static ICollection<BookDTO> CreateList(IEnumerable<Book> books)
+            => books.Select(FromEntity).ToList();
     }
 }
-

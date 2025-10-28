@@ -1,5 +1,5 @@
-﻿using Application.Models;
-using Application.Interfaces;
+﻿using Application.Interfaces;
+using Application.Models;
 using Domain.Entities;
 using Domain.Interfaces;
 
@@ -7,41 +7,17 @@ namespace Application.Services
 {
     public class BookService : IBookService
     {
-        private readonly IBookRepository _bookRepository;
+        private readonly IBookRepository _repo;
 
-        public BookService(IBookRepository bookRepository)
-        {
-            _bookRepository = bookRepository;
-        }
+        public BookService(IBookRepository repo) => _repo = repo;
 
-        public async Task<IEnumerable<BookDTO>> GetAllAsync()
-        {
-            var books = await _bookRepository.GetAllAsync();
-            return books.Select(b => new BookDTO
-            {
-                Id = b.Id,
-                Titulo = b.Titulo,
-                Autor = b.Autor,
-                Genero = b.Genero,
-                Resenia = b.Resenia,
-                ListId = b.ListId
-            });
-        }
+        public async Task<ICollection<BookDTO>> GetAllAsync()
+            => BookDTO.CreateList(await _repo.GetAllAsync());
 
         public async Task<BookDTO?> GetByIdAsync(int id)
         {
-            var book = await _bookRepository.GetByIdAsync(id);
-            if (book == null) return null;
-
-            return new BookDTO
-            {
-                Id = book.Id,
-                Titulo = book.Titulo,
-                Autor = book.Autor,
-                Genero = book.Genero,
-                Resenia = book.Resenia,
-                ListId = book.ListId
-            };
+            var book = await _repo.GetByIdAsync(id);
+            return book == null ? null : BookDTO.FromEntity(book);
         }
 
         public async Task<BookDTO> CreateAsync(BookDTO dto)
@@ -55,17 +31,14 @@ namespace Application.Services
                 ListId = dto.ListId
             };
 
-            await _bookRepository.AddAsync(book);
-            await _bookRepository.SaveChangesAsync();
-
-            dto.Id = book.Id;
-            return dto;
+            await _repo.AddAsync(book);
+            await _repo.SaveChangesAsync();
+            return BookDTO.FromEntity(book);
         }
 
         public async Task<BookDTO> UpdateAsync(int id, BookDTO dto)
         {
-            var book = await _bookRepository.GetByIdAsync(id);
-            if (book == null) throw new Exception("Libro no encontrado.");
+            var book = await _repo.GetByIdAsync(id) ?? throw new Exception("Libro no encontrado.");
 
             book.Titulo = dto.Titulo;
             book.Autor = dto.Autor;
@@ -73,19 +46,18 @@ namespace Application.Services
             book.Resenia = dto.Resenia;
             book.ListId = dto.ListId;
 
-            _bookRepository.Update(book);
-            await _bookRepository.SaveChangesAsync();
-
-            return dto;
+            _repo.Update(book);
+            await _repo.SaveChangesAsync();
+            return BookDTO.FromEntity(book);
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var book = await _bookRepository.GetByIdAsync(id);
+            var book = await _repo.GetByIdAsync(id);
             if (book == null) return false;
 
-            _bookRepository.Delete(book);
-            await _bookRepository.SaveChangesAsync();
+            _repo.Delete(book);
+            await _repo.SaveChangesAsync();
             return true;
         }
     }

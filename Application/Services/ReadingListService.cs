@@ -1,5 +1,5 @@
-﻿using Application.Models;
-using Application.Interfaces;
+﻿using Application.Interfaces;
+using Application.Models;
 using Domain.Entities;
 using Domain.Interfaces;
 
@@ -7,39 +7,17 @@ namespace Application.Services
 {
     public class ReadingListService : IReadingListService
     {
-        private readonly IReadingListRepository _listRepository;
+        private readonly IReadingListRepository _repo;
 
-        public ReadingListService(IReadingListRepository listRepository)
-        {
-            _listRepository = listRepository;
-        }
+        public ReadingListService(IReadingListRepository repo) => _repo = repo;
 
-        public async Task<IEnumerable<ReadingListDTO>> GetAllAsync()
-        {
-            var lists = await _listRepository.GetAllAsync();
-            return lists.Select(l => new ReadingListDTO
-            {
-                Id = l.Id,
-                Titulo = l.Titulo,
-                Descripcion = l.Descripcion,
-                EsCompartida = l.EsCompartida,
-                CreadorId = l.CreadorId
-            });
-        }
+        public async Task<ICollection<ReadingListDTO>> GetAllAsync()
+            => ReadingListDTO.CreateList(await _repo.GetAllAsync());
 
         public async Task<ReadingListDTO?> GetByIdAsync(int id)
         {
-            var list = await _listRepository.GetByIdAsync(id);
-            if (list == null) return null;
-
-            return new ReadingListDTO
-            {
-                Id = list.Id,
-                Titulo = list.Titulo,
-                Descripcion = list.Descripcion,
-                EsCompartida = list.EsCompartida,
-                CreadorId = list.CreadorId
-            };
+            var list = await _repo.GetByIdAsync(id);
+            return list == null ? null : ReadingListDTO.FromEntity(list);
         }
 
         public async Task<ReadingListDTO> CreateAsync(ReadingListDTO dto)
@@ -52,35 +30,32 @@ namespace Application.Services
                 CreadorId = dto.CreadorId
             };
 
-            await _listRepository.AddAsync(list);
-            await _listRepository.SaveChangesAsync();
-
-            dto.Id = list.Id;
-            return dto;
+            await _repo.AddAsync(list);
+            await _repo.SaveChangesAsync();
+            return ReadingListDTO.FromEntity(list);
         }
 
         public async Task<ReadingListDTO> UpdateAsync(int id, ReadingListDTO dto)
         {
-            var list = await _listRepository.GetByIdAsync(id);
-            if (list == null) throw new Exception("Lista no encontrada");
+            var list = await _repo.GetByIdAsync(id) ?? throw new Exception("Lista no encontrada.");
 
             list.Titulo = dto.Titulo;
             list.Descripcion = dto.Descripcion;
             list.EsCompartida = dto.EsCompartida;
             list.CreadorId = dto.CreadorId;
 
-            _listRepository.Update(list);
-            await _listRepository.SaveChangesAsync();
-            return dto;
+            _repo.Update(list);
+            await _repo.SaveChangesAsync();
+            return ReadingListDTO.FromEntity(list);
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var list = await _listRepository.GetByIdAsync(id);
+            var list = await _repo.GetByIdAsync(id);
             if (list == null) return false;
 
-            _listRepository.Delete(list);
-            await _listRepository.SaveChangesAsync();
+            _repo.Delete(list);
+            await _repo.SaveChangesAsync();
             return true;
         }
     }

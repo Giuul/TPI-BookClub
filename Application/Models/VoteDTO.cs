@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain.Entities;
 
 namespace Application.Models
 {
@@ -12,5 +8,17 @@ namespace Application.Models
         public int Valor { get; set; }
         public int UsuarioId { get; set; }
         public int LibroId { get; set; }
+
+        public static VoteDTO FromEntity(Vote vote)
+            => new VoteDTO
+            {
+                Id = vote.Id,
+                Valor = vote.Valor,
+                UsuarioId = vote.UsuarioId,
+                LibroId = vote.LibroId
+            };
+
+        public static ICollection<VoteDTO> CreateList(IEnumerable<Vote> votes)
+            => votes.Select(FromEntity).ToList();
     }
 }
