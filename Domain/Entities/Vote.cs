@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +10,9 @@ namespace Domain.Entities
     public class Vote
     {
         public int Id { get; set; }
-        public int valor { get; set; }
+
+        [Range(1, 5)]
+        public int Valor { get; set; }
 
         // Relaciones
         public int UsuarioId { get; set; }
