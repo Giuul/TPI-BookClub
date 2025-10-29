@@ -3,7 +3,7 @@ using Domain.Interfaces;
 using Infraestructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Repositories
+namespace Infraestructure.Repositories
 {
     public class VoteRepository : RepositoryBase<Vote>, IVoteRepository
     {

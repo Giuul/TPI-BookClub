@@ -1,7 +1,7 @@
 ﻿using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Data
+namespace Infraestructure.Data
 {
     public class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {

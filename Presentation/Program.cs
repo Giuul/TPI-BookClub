@@ -14,12 +14,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//Add aplicationDbContext al contenedor de servicios
-string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
-builder.Services.AddDbContext<ApplicationDbContext>(options=>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(conectionString)));
-
-
 // Servicios de aplicación
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IReadingListService, ReadingListService>();
