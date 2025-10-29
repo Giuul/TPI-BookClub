@@ -3,7 +3,7 @@ using Domain.Interfaces;
 using Infraestructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infraestructure.Repositories
+namespace Infrastructure.Repositories
 {
     public class ReadingListRepository : RepositoryBase<ReadingList>, IReadingListRepository
     {
